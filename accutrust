@@ -30,3 +30,38 @@ def add_patient():
 
 if __name__ == "__main__":
     app.run(debug=True)
+from fpdf import FPDF
+
+@app.route("/report/<int:pid>")
+def report(pid):
+    db = get_db()
+
+    patient = db.execute(
+        "SELECT * FROM patients WHERE id=?",
+        (pid,)
+    ).fetchone()
+
+    tests = db.execute(
+        "SELECT test_name, test_value FROM tests WHERE patient_id=?",
+        (pid,)
+    ).fetchall()
+
+    # 🔑 Report Template with Keywords
+    template = """
+Patient Name : {{NAME}}
+Age / Gender : {{AGE}} / {{GENDER}}
+
+Test Results:
+{{TEST_RESULTS}}
+"""
+
+    test_text = ""
+    for t in tests:
+        test_text += f"{t['test_name']} : {t['test_value']}\n"
+
+    report_text = template.replace("{{NAME}}", patient["name"]) \
+                          .replace("{{AGE}}", patient["age"]) \
+                          .replace("{{GENDER}}", patient["gender"]) \
+                          .replace("{{TEST_RESULTS}}", test_text)
+
+    return f"<pre>{report_text}</pre>"
