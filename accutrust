@@ -65,3 +65,40 @@ Test Results:
                           .replace("{{TEST_RESULTS}}", test_text)
 
     return f"<pre>{report_text}</pre>"
+@app.route("/report-pdf/<int:pid>")
+def report_pdf(pid):
+    db = get_db()
+
+    patient = db.execute(
+        "SELECT * FROM patients WHERE id=?",
+        (pid,)
+    ).fetchone()
+
+    tests = db.execute(
+        "SELECT test_name, test_value FROM tests WHERE patient_id=?",
+        (pid,)
+    ).fetchall()
+
+    pdf = FPDF()
+    pdf.add_page()
+
+    pdf.set_font("Arial", "B", 16)
+    pdf.cell(0, 10, "PATHOLOGY LAB REPORT", ln=True, align="C")
+
+    pdf.ln(5)
+    pdf.set_font("Arial", size=12)
+    pdf.cell(0, 8, f"Patient Name: {patient['name']}", ln=True)
+    pdf.cell(0, 8, f"Age: {patient['age']}    Gender: {patient['gender']}", ln=True)
+
+    pdf.ln(5)
+    pdf.set_font("Arial", "B", 12)
+    pdf.cell(0, 8, "Test Results:", ln=True)
+
+    pdf.set_font("Arial", size=11)
+    for t in tests:
+        pdf.cell(0, 8, f"{t['test_name']} : {t['test_value']}", ln=True)
+
+    file_name = f"report_{pid}.pdf"
+    pdf.output(file_name)
+
+    return f"PDF Generated: <a href='/{file_name}' target='_blank'>Download Report</a>"
