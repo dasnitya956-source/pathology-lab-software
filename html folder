@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pathology Lab</title>
+</head>
+<body>
+    <h2>Patient Entry</h2>
+
+    <form method="post" action="/add-patient">
+        Name: <input type="text" name="name"><br><br>
+        Age: <input type="text" name="age"><br><br>
+        Gender:
+        <select name="gender">
+            <option>Male</option>
+            <option>Female</option>
+        </select><br><br>
+
+        <button type="submit">Save Patient</button>
+    </form>
+</body>
+</html>
