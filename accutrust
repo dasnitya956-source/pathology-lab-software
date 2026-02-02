@@ -1,0 +1,32 @@
+from flask import Flask, render_template, request
+import sqlite3
+
+app = Flask(__name__)
+
+def get_db():
+    conn = sqlite3.connect("lab.db")
+    conn.row_factory = sqlite3.Row
+    return conn
+
+@app.route("/")
+def home():
+    return render_template("index.html")
+
+@app.route("/add-patient", methods=["POST"])
+def add_patient():
+    name = request.form["name"]
+    age = request.form["age"]
+    gender = request.form["gender"]
+
+    db = get_db()
+    db.execute(
+        "INSERT INTO patients (name, age, gender) VALUES (?, ?, ?)",
+        (name, age, gender)
+    )
+    db.commit()
+    db.close()
+
+    return "Patient Added Successfully"
+
+if __name__ == "__main__":
+    app.run(debug=True)
