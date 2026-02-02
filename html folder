@@ -19,3 +19,21 @@
     </form>
 </body>
 </html>
+<h2>Add Test Result</h2>
+
+<form method="post" action="/add-test">
+    Patient ID: <input type="number" name="patient_id" required><br><br>
+
+    Test Name:
+    <select name="test_name">
+        <option>HB</option>
+        <option>WBC</option>
+        <option>Platelet</option>
+        <option>RBC</option>
+    </select><br><br>
+
+    Test Value:
+    <input type="text" name="test_value" required><br><br>
+
+    <button type="submit">Save Test</button>
+</form>
